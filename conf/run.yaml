@@ -1,0 +1,77 @@
+defaults:
+  - task: vqa2
+  - model: vilt
+  - _self_
+  - override hydra/job_logging: colorlog
+  - override hydra/hydra_logging: colorlog
+
+data_dir: ${oc.env:PWD}/data
+results_dir: ${oc.env:PWD}/data
+results_metric_file: ${results_dir}/metrics.json
+log_name:
+hydra:
+  job:
+    chdir: True
+  run:
+    dir: data/hydra-logs/${log_name}-${now:%Y-%m-%d_%H-%M-%S}
+
+mixed_precision: "no" # or fp16
+cpu: False
+gradient_accumulation_steps: 1
+num_workers: 8
+pin_memory: True
+# train_batch_size: 2
+# dev_batch_size: 4
+per_device_train_batch_size: 2
+per_device_dev_batch_size: 4
+
+wandb:
+  id:
+  project:
+  name: ${log_name}
+  notes:
+
+tensorboard:
+  name: ${log_name}
+  logging_dir: ${results_dir}/tensorboard
+
+do_train: False # finetuning
+do_eval: False
+do_step_eval: False
+do_predict: False
+do_eval_predict: False
+
+# for training, usually set do_train=True, do_eval=True, do_predict=True, if predict dataset has labels, then set do_eval_predict=True too.
+
+# for evaluation only, set do_train=False, do_eval=True, do_predict=False, do_eval_predict=False
+
+# for prediction only, do_train=False, do_eval=False, do_predict=True, if predict dataset has labels, then set do_eval_predict=True too.
+
+seed: 2021
+use_deepspeed: False
+train:
+  log_freq: 0
+  distill_after_epochs: 0
+  find_unused_parameters: False
+  clip_gradient_norm: 0
+  epochs: 10
+  scheduler:
+    name: get_polynomial_decay_schedule_with_warmup
+    num_warmup_steps:
+    warmup_ratio: 0.1
+    cfg:
+
+  optimizer:
+    name: adamw
+    learning_rate: 1e-4
+    weight_decay: 0.01
+    lr_mult_pruner: 1
+    lr_mult: 1  # multiply lr for downstream heads
+    lr_mult_cross_modal: 1
+  ckpt: train
+  ckpt_save_dir: ${results_dir}/ckpt/${train.ckpt}
+  resume_from_checkpoint: ${data_dir}/ckpt/${train.ckpt}
+  save_every_steps: 1000
+  num_kept_ckpt: 2
+  stop_patience: 15
+  freeze_patterns:

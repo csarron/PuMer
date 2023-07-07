@@ -1,0 +1,64 @@
+
+name: irtr
+dataset_dir: ${data_dir}/datasets/irtr
+
+task_loss_scale: 1
+itm_loss_scale: 0.5
+prune_no_sparsity: False
+prune_loss_scale: 0
+cnt_loss_scale: 0
+logits_loss_scale: 1
+states_loss_scale: 0
+text_loss_scale: 0
+attn_loss_scale: 0
+ib_kl: False
+
+max_text_len: 40
+tokenizer: bert-base-uncased
+dataset_target: pumer.dataset.dataset_retrieval.RetrievalTrainDataset
+dataset_infer_target: pumer.dataset.dataset_retrieval.RetrievalInferenceDataset
+image_size: 384
+is_clip: True
+num_negative_samples: 15
+
+image_db_dir: /tmp/lmdb
+image_db: coco-trainval2014.lmdb # flickr30k_images.lmdb
+
+dev_file: mscoco-test.jsonl
+test_file: mscoco-test.jsonl
+train_file: mscoco-train.jsonl # + mscoco-restval.jsonl
+
+predictions_output_file: ${data_dir}/preds/${task.test_file}.${model.ckpt}-preds.json #${data_dir}/vqa2-test2015-predictions.json
+
+eval_dataset:
+  _target_: ${task.dataset_infer_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  use_randaug: False
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.dev_file}
+  image_db_path: ${task.image_db_dir}/${task.image_db}
+
+predict_dataset: ${task.test_dataset}
+
+test_dataset:
+  _target_: ${task.dataset_infer_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  use_randaug: False
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.test_file}
+  image_db_path: ${task.image_db_dir}/${task.image_db}
+
+train_dataset:
+  _target_: ${task.dataset_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  num_negative_samples: ${task.num_negative_samples}
+  use_randaug: True
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.train_file}
+  image_db_path: ${task.image_db_dir}/${task.image_db}

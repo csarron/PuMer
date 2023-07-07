@@ -1,0 +1,68 @@
+
+name: ve
+dataset_dir: ${data_dir}/datasets/snli-ve
+
+num_negatives_per_example: 0
+
+task_loss_scale: 1
+prune_no_sparsity: False
+prune_loss_scale: 0
+grdcm_loss_scale: 0
+grdcm_bce: False
+cnt_loss_scale: 0
+logits_loss_scale: 1
+states_loss_scale: 0
+text_loss_scale: 0
+attn_loss_scale: 0
+ib_kl: False
+grdcm_ctr: False
+gradcam_layer: -1
+
+max_text_len: 40
+tokenizer: bert-base-uncased
+dataset_target: pumer.dataset.dataset_ve.VeDataset
+image_size: 384
+is_clip: False
+
+image_db_dir: /tmp/lmdb
+train_db: flickr30k_images.lmdb
+dev_db: flickr30k_images.lmdb
+test_db: flickr30k_images.lmdb
+
+train_file: snli_ve_train.jsonl
+dev_file: snli_ve_dev.jsonl
+test_file: snli_ve_test.jsonl
+
+predictions_output_file: ${results_dir}/preds/${task.test_file}.${model.ckpt}-preds.csv
+
+eval_dataset:
+  _target_: ${task.dataset_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  use_randaug: False
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.dev_file}
+  image_db_path: ${task.image_db_dir}/${task.dev_db}
+
+predict_dataset: ${task.test_dataset}
+
+test_dataset:
+  _target_: ${task.dataset_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  use_randaug: False
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.test_file}
+  image_db_path: ${task.image_db_dir}/${task.test_db}
+
+train_dataset:
+  _target_: ${task.dataset_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  use_randaug: True
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.train_file}
+  image_db_path: ${task.image_db_dir}/${task.train_db}

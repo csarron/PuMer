@@ -1,0 +1,19 @@
+name: meter
+
+ckpt: converted/meter_pretrain_384 # finetuned/meter_vqa
+
+ckpt_path: ${data_dir}/ckpt/${model.ckpt}
+
+teacher_name: meter
+teacher_ckpt:
+teacher_ckpt_path: ${data_dir}/ckpt/${model.teacher_ckpt}
+
+config:
+  drop_rate: 0.1
+  freeze_patterns:
+  prune_layers:
+    # - -1
+  keep_ratio: 0.5
+  prune_method: mlp_states # first_head, mean_head, mlp_states
+  contrast_method: none # states, attn, none
+  ib_kl: False

@@ -1,0 +1,79 @@
+
+name: vqa2
+dataset_dir: ${data_dir}/datasets/vqa2
+ans2label: vqa2_ans2label.json
+label2ans: vqa2_label2ans.json
+ans2label_file: ${task.dataset_dir}/${task.ans2label}
+label2ans_file: ${task.dataset_dir}/${task.label2ans}
+# label2ans_file: ${task.dataset_dir}/${task.ans2label_file}
+num_negatives_per_example: 0
+
+task_loss_scale: 1
+prune_no_sparsity: False
+prune_loss_scale: 0
+grdcm_loss_scale: 0
+grdcm_bce: False
+cnt_loss_scale: 0
+logits_loss_scale: 1
+states_loss_scale: 0
+text_loss_scale: 0
+attn_loss_scale: 0
+ib_kl: False
+grdcm_ctr: False
+gradcam_layer: -1
+
+max_text_len: 32
+tokenizer: bert-base-uncased
+dataset_target: pumer.dataset.dataset_vqa2.Vqa2Dataset
+image_size: 384
+is_clip: True
+gradcam_train_file: None # vqa2-train2014.gradcam384-16.jsonl
+gradcam_val_file: None # vqa2-val2014.gradcam384-16.jsonl
+
+image_db_dir: /tmp/lmdb
+trainval_db: coco-trainval2014.lmdb
+
+test_db: coco-test2015.lmdb
+
+dev_file: vqa2-val2014.jsonl
+test_file: vqa2-test2015.jsonl
+train_file: vqa2-train2014.jsonl
+
+predictions_output_file: ${results_dir}/preds/${task.test_file}.${model.ckpt}-preds.json #${data_dir}/vqa2-test2015-predictions.json
+
+eval_dataset:
+  _target_: ${task.dataset_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  ans2label_file: ${task.ans2label_file}
+  use_randaug: False
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.dev_file}
+  image_db_path: ${task.image_db_dir}/${task.trainval_db}
+  gradcam_file: ${task.dataset_dir}/${task.gradcam_val_file}
+
+predict_dataset: ${task.test_dataset}
+
+test_dataset:
+  _target_: ${task.dataset_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  ans2label_file: ${task.ans2label_file}
+  use_randaug: False
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.test_file}
+  image_db_path: ${task.image_db_dir}/${task.test_db}
+
+train_dataset:
+  _target_: ${task.dataset_target}
+  tokenizer: ${task.tokenizer}
+  max_text_len: ${task.max_text_len}
+  ans2label_file: ${task.ans2label_file}
+  use_randaug: True
+  image_size: ${task.image_size}
+  is_clip: ${task.is_clip}
+  dataset_file: ${task.dataset_dir}/${task.train_file}
+  image_db_path: ${task.image_db_dir}/${task.trainval_db}
+  gradcam_file: ${task.dataset_dir}/${task.gradcam_train_file}

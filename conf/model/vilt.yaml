@@ -1,0 +1,38 @@
+name: vilt
+
+ckpt: converted/vilt_pretrain # finetuned/vilt_vqa
+
+ckpt_path: ${data_dir}/ckpt/${model.ckpt}
+
+teacher_name: vilt
+teacher_ckpt:
+teacher_ckpt_path: ${data_dir}/ckpt/${model.teacher_ckpt}
+
+config:
+  freeze_patterns:
+    # - (.*)text_encoder.
+    # - (.*)image_encoder.
+  drop_rate: 0.1
+  prune_layers:
+    # - 3
+    # - 6
+    # - 9
+
+    # - 1
+    # - 4
+    # - 7
+    # - 10
+  keep_ratio: 1
+  prune_method: mlp_states # first_head, mean_head, mlp_states
+  contrast_method: none # states, attn, none
+  ib_kl: False
+  reduce_layers:
+    # - 3
+    # - 6
+    # - 9
+  merge_ratio: 0
+  sim_method: first_head
+  merge_style: tip
+  merge_r: 0
+  merge_text: 0
+  prune_r: 0
