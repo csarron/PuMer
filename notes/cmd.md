@@ -1,6 +1,16 @@
 # Common commands
 
-below are some example commands for training and evaluation, please change dir related path to your actual path
+Below are some example commands for training and evaluation, please change dir related path to your actual path
+
+If you notice (slightly) different training/evaluation results, watch out the different configurations for ViLT and METER
+
+for vilt:
+- `task.is_clip=False`
+- `task.tokenizer=bert-base-uncased`
+
+for meter:
+- `task.is_clip=True`
+- `task.tokenizer=roberta-base`
 
 ## Training
 
