@@ -1,6 +1,6 @@
 # PuMer (ACL 2023)
 
-This repo is the official implementation for the paper "PuMer: Pruning and Merging Tokens for Efficient Vision Language Models", [arxiv](https://arxiv.org/abs/2305.17530)
+This repo is the official implementation for the paper "PuMer: Pruning and Merging Tokens for Efficient Vision Language Models", [paper](https://aclanthology.org/2023.acl-long.721/)
 
 ## Usage
 
@@ -112,12 +112,30 @@ meter-nlvr2-p0.3r0.5t0.2-246
 
 see [notes/profile.md](./notes/profile.md)
 
-# FAQs
+## FAQs
 
 - set `TRANSFORMERS_OFFLINE=1` after first use, otherwise sometime it will report 504 error due to always online look up.
 
-# Misc
+## Misc
 
 - ignore the code in `src/pumer/model/pruner.py` (deprecated and unused), needs cleanup
 - the current codebase contain many clutters and experimental code that is not related to PuMer implementation, please ignore that.
 
+## Citation
+
+```bibtex
+@inproceedings{cao-etal-2023-pumer,
+    title = "{P}u{M}er: Pruning and Merging Tokens for Efficient Vision Language Models",
+    author = "Cao, Qingqing  and
+      Paranjape, Bhargavi  and
+      Hajishirzi, Hannaneh",
+    booktitle = "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.acl-long.721",
+    pages = "12890--12903",
+}
+
+```
